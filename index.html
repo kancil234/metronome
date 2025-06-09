@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Screen Metronome</title>
+    <title>Metronome & Violin Tuner</title>
     <style>
         :root {
             --bg-color: #f5f5f5;
@@ -15,6 +15,8 @@
             --visualizer-active: #ff5722;
             --slider-bg: #ddd;
             --slider-thumb: #4CAF50;
+            --tuner-bg: #e3f2fd;
+            --tuner-active: #bbdefb;
         }
 
         .dark-mode {
@@ -27,6 +29,8 @@
             --visualizer-active: #E64A19;
             --slider-bg: #333;
             --slider-thumb: #2E7D32;
+            --tuner-bg: #0d47a1;
+            --tuner-active: #1565c0;
         }
 
         body {
@@ -56,8 +60,44 @@
         }
 
         h1 {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 2.5rem;
+        }
+
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: var(--container-bg);
+            border: 1px solid var(--button-bg);
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+
+        .tab.active {
+            background-color: var(--button-bg);
+            color: white;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .panel {
+            display: none;
+            padding: 20px;
+            background-color: var(--container-bg);
+            border-radius: 0 5px 5px 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .panel.active {
+            display: block;
         }
 
         .controls {
@@ -168,6 +208,51 @@
             font-size: 1rem;
         }
 
+        /* Violin tuner styles */
+        .tuner-strings {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .string {
+            display: flex;
+            align-items: center;
+            background-color: var(--tuner-bg);
+            padding: 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .string.active {
+            background-color: var(--tuner-active);
+        }
+
+        .string-name {
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+
+        .string-note {
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+
+        .string-frequency {
+            margin-left: auto;
+            width: 80px;
+            text-align: right;
+        }
+
+        .play-button {
+            margin-left: 15px;
+            padding: 8px 15px;
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.8rem;
@@ -192,27 +277,67 @@
     <button class="mode-toggle" id="modeToggle">Dark Mode</button>
     
     <div class="container">
-        <h1>Metronome</h1>
+        <h1>Metronome & Violin Tuner</h1>
         
-        <div class="bpm-control">
-            <button id="decreaseBpm">-</button>
-            <input type="range" id="bpmSlider" min="40" max="208" value="120">
-            <button id="increaseBpm">+</button>
+        <div class="tab-container">
+            <div class="tab active" data-tab="metronome">Metronome</div>
+            <div class="tab" data-tab="tuner">Violin Tuner</div>
         </div>
         
-        <div class="visualizer" id="visualizer">
-            <div class="visualizer-bpm" id="visualizerBpm">120</div>
-        </div>
-        
-        <button id="startStop">Start</button>
-        
-        <div class="beat-counter">
-            Beat: <span id="beatCount">0</span>/<span id="beatsPerMeasure">4</span>
-        </div>
-        
-        <div class="controls">
-            <button id="decreaseBeats">- Beats</button>
-            <button id="increaseBeats">+ Beats</button>
+        <div class="content">
+            <!-- Metronome Panel -->
+            <div class="panel active" id="metronome-panel">
+                <div class="bpm-control">
+                    <button id="decreaseBpm">-</button>
+                    <input type="range" id="bpmSlider" min="40" max="208" value="120">
+                    <button id="increaseBpm">+</button>
+                </div>
+                
+                <div class="visualizer" id="visualizer">
+                    <div class="visualizer-bpm" id="visualizerBpm">120</div>
+                </div>
+                
+                <button id="startStop">Start</button>
+                
+                <div class="beat-counter">
+                    Beat: <span id="beatCount">0</span>/<span id="beatsPerMeasure">4</span>
+                </div>
+                
+                <div class="controls">
+                    <button id="decreaseBeats">- Beats</button>
+                    <button id="increaseBeats">+ Beats</button>
+                </div>
+            </div>
+            
+            <!-- Violin Tuner Panel -->
+            <div class="panel" id="tuner-panel">
+                <div class="tuner-strings">
+                    <div class="string" data-note="E" data-frequency="659.25">
+                        <div class="string-name">E</div>
+                        <div class="string-note">E5</div>
+                        <div class="string-frequency">659.25 Hz</div>
+                        <button class="play-button" data-string="e">Play</button>
+                    </div>
+                    <div class="string" data-note="A" data-frequency="440.00">
+                        <div class="string-name">A</div>
+                        <div class="string-note">A4</div>
+                        <div class="string-frequency">440.00 Hz</div>
+                        <button class="play-button" data-string="a">Play</button>
+                    </div>
+                    <div class="string" data-note="D" data-frequency="293.66">
+                        <div class="string-name">D</div>
+                        <div class="string-note">D4</div>
+                        <div class="string-frequency">293.66 Hz</div>
+                        <button class="play-button" data-string="d">Play</button>
+                    </div>
+                    <div class="string" data-note="G" data-frequency="196.00">
+                        <div class="string-name">G</div>
+                        <div class="string-note">G3</div>
+                        <div class="string-frequency">196.00 Hz</div>
+                        <button class="play-button" data-string="g">Play</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -235,9 +360,62 @@
         const decreaseBeatsButton = document.getElementById('decreaseBeats');
         const increaseBeatsButton = document.getElementById('increaseBeats');
         const modeToggle = document.getElementById('modeToggle');
+        const tabs = document.querySelectorAll('.tab');
+        const panels = document.querySelectorAll('.panel');
+        const playButtons = document.querySelectorAll('.play-button');
+        const strings = document.querySelectorAll('.string');
         
         // Initialize beats per measure
         let beatsPerMeasure = 4;
+        
+        // Load metronome sounds
+        let metronomeSounds = {
+            downbeat: null,
+            beat: null
+        };
+        
+        // Load sound samples
+        function loadSamples() {
+            // These are simple synthesized sounds that approximate a metronome
+            // In a production app, you would use real recorded samples
+            const downbeatDuration = 0.1;
+            const beatDuration = 0.08;
+            
+            // Downbeat sound (higher pitch)
+            const downbeatOsc = audioContext.createOscillator();
+            const downbeatGain = audioContext.createGain();
+            downbeatOsc.type = 'sine';
+            downbeatOsc.frequency.value = 800;
+            downbeatGain.gain.setValueAtTime(0.8, audioContext.currentTime);
+            downbeatGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + downbeatDuration);
+            downbeatOsc.connect(downbeatGain);
+            downbeatGain.connect(audioContext.destination);
+            downbeatOsc.start();
+            downbeatOsc.stop(audioContext.currentTime + downbeatDuration);
+            
+            // Regular beat sound (lower pitch)
+            const beatOsc = audioContext.createOscillator();
+            const beatGain = audioContext.createGain();
+            beatOsc.type = 'sine';
+            beatOsc.frequency.value = 500;
+            beatGain.gain.setValueAtTime(0.6, audioContext.currentTime);
+            beatGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + beatDuration);
+            beatOsc.connect(beatGain);
+            beatGain.connect(audioContext.destination);
+            beatOsc.start();
+            beatOsc.stop(audioContext.currentTime + beatDuration);
+        }
+        
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-panel`).classList.add('active');
+            });
+        });
         
         // Update BPM display when slider changes
         bpmSlider.addEventListener('input', function() {
@@ -301,9 +479,25 @@
             }
         });
         
+        // Play violin string sounds
+        playButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const string = this.dataset.string;
+                playViolinString(string);
+                
+                // Highlight the string being played
+                strings.forEach(s => s.classList.remove('active'));
+                this.parentElement.classList.add('active');
+                setTimeout(() => {
+                    this.parentElement.classList.remove('active');
+                }, 1000);
+            });
+        });
+        
         function startMetronome() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                loadSamples();
             }
             
             isRunning = true;
@@ -336,26 +530,63 @@
         }
         
         function playClick() {
+            if (currentBeat === 1) {
+                // Downbeat (first beat of measure)
+                playMetronomeSound(800, 0.1);
+            } else {
+                // Regular beat
+                playMetronomeSound(500, 0.08);
+            }
+        }
+        
+        function playMetronomeSound(frequency, duration) {
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
             
+            oscillator.type = 'sine';
+            oscillator.frequency.value = frequency;
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            // First beat has a higher pitch
-            if (currentBeat === 1) {
-                oscillator.frequency.value = 800;
-            } else {
-                oscillator.frequency.value = 400;
-            }
-            
+            gainNode.gain.setValueAtTime(0.7, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(
-                0.1, 
-                audioContext.currentTime + 0.1
+                0.01, 
+                audioContext.currentTime + duration
             );
             
             oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.1);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+        
+        function playViolinString(string) {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            let frequency;
+            switch(string) {
+                case 'e': frequency = 659.25; break; // E5
+                case 'a': frequency = 440.00; break; // A4
+                case 'd': frequency = 293.66; break; // D4
+                case 'g': frequency = 196.00; break; // G3
+                default: frequency = 440.00;
+            }
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = frequency;
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Violin-like envelope
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.7, audioContext.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 2);
         }
     </script>
 </body>
