@@ -3,337 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metronome & Tuner</title>
+    <title>Elegant Metronome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f5f5f5;
-            --text-color: #333;
-            --container-bg: white;
-            --button-bg: #4CAF50;
-            --button-hover: #45a049;
-            --visualizer-bg: #4CAF50;
-            --visualizer-active: #ff5722;
-            --slider-bg: #ddd;
-            --slider-thumb: #4CAF50;
-            --tuner-bg: #e3f2fd;
-            --tuner-active: #bbdefb;
-            --switch-bg: #2196F3;
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #00b894;
+            --danger: #d63031;
         }
-
-        .dark-mode {
-            --bg-color: #121212;
-            --text-color: #f5f5f5;
-            --container-bg: #1e1e1e;
-            --button-bg: #2E7D32;
-            --button-hover: #1B5E20;
-            --visualizer-bg: #2E7D32;
-            --visualizer-active: #E64A19;
-            --slider-bg: #333;
-            --slider-thumb: #2E7D32;
-            --tuner-bg: #0d47a1;
-            --tuner-active: #1565c0;
-            --switch-bg: #0b7dda;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
+        
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
         }
-
-        .container {
+        
+        body {
+            font-family: 'Poppins', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 100%;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
             padding: 20px;
-            box-sizing: border-box;
         }
-
-        h1 {
-            margin-bottom: 20px;
-            font-size: 2.5rem;
-            text-align: center;
-        }
-
-        .app-switcher {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .switch-btn {
-            background-color: var(--switch-bg);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .switch-btn.active {
-            background-color: var(--button-bg);
-        }
-
-        .mode-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            font-size: 1rem;
-        }
-
-        /* Metronome Styles */
-        #metronome-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        
+        .metronome-container {
             width: 100%;
-            max-width: 600px;
-        }
-
-        .bpm-control {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .visualizer {
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            padding: 30px;
             position: relative;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background-color: var(--visualizer-bg);
-            margin: 30px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s, background-color 0.1s;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            z-index: 1;
         }
-
-        .visualizer-bpm {
-            font-size: 3rem;
-            font-weight: bold;
-            color: white;
+        
+        .metronome-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: -1;
+            animation: rotate 20s linear infinite;
         }
-
-        .active {
-            transform: scale(1.1);
-            background-color: var(--visualizer-active);
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        .beat-counter {
-            font-size: 1.5rem;
-            margin: 20px;
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 28px;
         }
-
-        /* Tuner Styles */
-        #tuner-page {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
         }
-
-        .tuner-strings {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            width: 100%;
+        
+        .bpm-display {
+            font-size: 72px;
+            font-weight: 300;
+            color: var(--primary);
+            margin: 20px 0;
+            position: relative;
+            display: inline-block;
         }
-
-        .string {
-            display: flex;
-            align-items: center;
-            background-color: var(--tuner-bg);
-            padding: 15px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+        
+        .bpm-display::after {
+            content: 'BPM';
+            position: absolute;
+            bottom: -20px;
+            right: -40px;
+            font-size: 16px;
+            color: #666;
         }
-
-        .string.active {
-            background-color: var(--tuner-active);
+        
+        .controls {
+            margin: 30px 0;
         }
-
-        .string-name {
-            font-weight: bold;
-            width: 40px;
-            text-align: center;
+        
+        .slider-container {
+            margin: 30px 0;
         }
-
-        .string-note {
-            font-size: 1.5rem;
-            font-weight: bold;
-            width: 60px;
-            text-align: center;
-        }
-
-        .string-frequency {
-            margin-left: auto;
-            width: 80px;
-            text-align: right;
-        }
-
-        /* Common Controls */
-        button {
-            background-color: var(--button-bg);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 1rem;
-            margin: 8px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: var(--button-hover);
-        }
-
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-
-        #startStop {
-            padding: 20px 40px;
-            font-size: 1.5rem;
-            margin: 20px;
-        }
-
-        input[type="range"] {
-            width: 300px;
-            height: 10px;
-            margin: 0 20px;
+        
+        .slider {
             -webkit-appearance: none;
-            background: var(--slider-bg);
-            border-radius: 5px;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e0e0e0;
             outline: none;
+            margin: 15px 0;
         }
-
-        input[type="range"]::-webkit-slider-thumb {
+        
+        .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 25px;
-            height: 25px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: var(--slider-thumb);
+            background: var(--primary);
             cursor: pointer;
+            box-shadow: 0 2px 10px rgba(108, 92, 231, 0.4);
+            transition: all 0.2s;
         }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .visualizer {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .visualizer-bpm {
-                font-size: 2rem;
-            }
-            
-            input[type="range"] {
-                width: 200px;
-            }
+        
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.6);
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .visualizer {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: white;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .visualizer-inner {
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .visualizer-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary) 0%, rgba(108, 92, 231, 0) 70%);
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .pulse-active {
+            animation: pulse 0.5s ease-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+        
+        .tempo-indicator {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="app-switcher">
-        <button class="switch-btn active" id="metronome-btn">Metronome</button>
-        <button class="switch-btn" id="tuner-btn">Tuner</button>
-    </div>
-    
-    <button class="mode-toggle" id="modeToggle">Dark Mode</button>
-    
-    <div class="container">
-        <!-- Metronome Page -->
-        <div id="metronome-page">
-            <h1>Metronome</h1>
-            
-            <div class="bpm-control">
-                <button id="decreaseBpm">-</button>
-                <input type="range" id="bpmSlider" min="40" max="208" value="120">
-                <button id="increaseBpm">+</button>
-            </div>
-            
-            <div class="visualizer" id="visualizer">
-                <div class="visualizer-bpm" id="visualizerBpm">120</div>
-            </div>
-            
-            <button id="startStop">Start</button>
-            
-            <div class="beat-counter">
-                Beat: <span id="beatCount">0</span>/<span id="beatsPerMeasure">4</span>
-            </div>
-            
-            <div class="controls">
-                <button id="decreaseBeats">- Beats</button>
-                <button id="increaseBeats">+ Beats</button>
+    <div class="metronome-container">
+        <h1>Elegant Metronome</h1>
+        <p class="subtitle">Keep perfect time with style</p>
+        
+        <div class="bpm-display" id="bpm-value">120</div>
+        
+        <div class="slider-container">
+            <input type="range" class="slider" id="bpm-slider" min="40" max="208" value="120">
+        </div>
+        
+        <div class="visualizer">
+            <div class="visualizer-pulse" id="visualizer-pulse"></div>
+            <div class="visualizer-inner">
+                <div class="tempo-indicator" id="tempo-indicator">120</div>
             </div>
         </div>
         
-        <!-- Tuner Page -->
-        <div id="tuner-page">
-            <h1>Violin Tuner</h1>
-            
-            <div class="tuner-strings">
-                <div class="string" data-note="E" data-frequency="659.25">
-                    <div class="string-name">E</div>
-                    <div class="string-note">E5</div>
-                    <div class="string-frequency">659.25 Hz</div>
-                    <button class="play-button" data-string="e">Play</button>
-                </div>
-                <div class="string" data-note="A" data-frequency="440.00">
-                    <div class="string-name">A</div>
-                    <div class="string-note">A4</div>
-                    <div class="string-frequency">440.00 Hz</div>
-                    <button class="play-button" data-string="a">Play</button>
-                </div>
-                <div class="string" data-note="D" data-frequency="293.66">
-                    <div class="string-name">D</div>
-                    <div class="string-note">D4</div>
-                    <div class="string-frequency">293.66 Hz</div>
-                    <button class="play-button" data-string="d">Play</button>
-                </div>
-                <div class="string" data-note="G" data-frequency="196.00">
-                    <div class="string-name">G</div>
-                    <div class="string-note">G3</div>
-                    <div class="string-frequency">196.00 Hz</div>
-                    <button class="play-button" data-string="g">Play</button>
-                </div>
-            </div>
-            
-            <div class="controls" style="margin-top: 30px;">
-                <button id="play-all-strings">Play All Strings</button>
-            </div>
+        <div class="button-group">
+            <button class="btn btn-primary" id="start-stop-btn">Start</button>
+            <button class="btn btn-secondary" id="tap-tempo-btn">Tap Tempo</button>
+        </div>
+        
+        <div class="footer">
+            Tap the button in rhythm to set the tempo
         </div>
     </div>
 
@@ -341,266 +271,140 @@
         // Audio context and elements
         let audioContext;
         let metronomeInterval;
-        let isRunning = false;
-        let currentBeat = 0;
+        let isPlaying = false;
+        let lastTapTime = 0;
+        let tapTimes = [];
         
         // DOM elements
-        const startStopButton = document.getElementById('startStop');
-        const bpmSlider = document.getElementById('bpmSlider');
-        const bpmValue = document.getElementById('visualizerBpm');
-        const decreaseBpmButton = document.getElementById('decreaseBpm');
-        const increaseBpmButton = document.getElementById('increaseBpm');
-        const visualizer = document.getElementById('visualizer');
-        const beatCountElement = document.getElementById('beatCount');
-        const beatsPerMeasureElement = document.getElementById('beatsPerMeasure');
-        const decreaseBeatsButton = document.getElementById('decreaseBeats');
-        const increaseBeatsButton = document.getElementById('increaseBeats');
-        const modeToggle = document.getElementById('modeToggle');
-        const metronomeBtn = document.getElementById('metronome-btn');
-        const tunerBtn = document.getElementById('tuner-btn');
-        const metronomePage = document.getElementById('metronome-page');
-        const tunerPage = document.getElementById('tuner-page');
-        const playButtons = document.querySelectorAll('.play-button');
-        const playAllButton = document.getElementById('play-all-strings');
-        const strings = document.querySelectorAll('.string');
+        const startStopBtn = document.getElementById('start-stop-btn');
+        const tapTempoBtn = document.getElementById('tap-tempo-btn');
+        const bpmSlider = document.getElementById('bpm-slider');
+        const bpmValue = document.getElementById('bpm-value');
+        const tempoIndicator = document.getElementById('tempo-indicator');
+        const visualizerPulse = document.getElementById('visualizer-pulse');
         
-        // Initialize beats per measure
-        let beatsPerMeasure = 4;
-        
-        // Switch between metronome and tuner
-        metronomeBtn.addEventListener('click', () => {
-            metronomePage.style.display = 'flex';
-            tunerPage.style.display = 'none';
-            metronomeBtn.classList.add('active');
-            tunerBtn.classList.remove('active');
-            
-            // Stop any playing tuner sounds when switching
-            if (audioContext) {
-                audioContext.close();
-                audioContext = null;
-            }
-        });
-        
-        tunerBtn.addEventListener('click', () => {
-            metronomePage.style.display = 'none';
-            tunerPage.style.display = 'flex';
-            metronomeBtn.classList.remove('active');
-            tunerBtn.classList.add('active');
-            
-            // Stop metronome when switching to tuner
-            if (isRunning) {
-                stopMetronome();
-            }
-        });
-        
-        // Update BPM display when slider changes
-        bpmSlider.addEventListener('input', function() {
-            bpmValue.textContent = this.value;
-            if (isRunning) {
-                clearInterval(metronomeInterval);
-                startMetronome();
-            }
-        });
-        
-        // BPM control buttons
-        decreaseBpmButton.addEventListener('click', function() {
-            bpmSlider.value = parseInt(bpmSlider.value) - 1;
-            bpmValue.textContent = bpmSlider.value;
-            if (isRunning) {
-                clearInterval(metronomeInterval);
-                startMetronome();
-            }
-        });
-        
-        increaseBpmButton.addEventListener('click', function() {
-            bpmSlider.value = parseInt(bpmSlider.value) + 1;
-            bpmValue.textContent = bpmSlider.value;
-            if (isRunning) {
-                clearInterval(metronomeInterval);
-                startMetronome();
-            }
-        });
-        
-        // Beats per measure controls
-        decreaseBeatsButton.addEventListener('click', function() {
-            if (beatsPerMeasure > 1) {
-                beatsPerMeasure--;
-                beatsPerMeasureElement.textContent = beatsPerMeasure;
-            }
-        });
-        
-        increaseBeatsButton.addEventListener('click', function() {
-            if (beatsPerMeasure < 12) {
-                beatsPerMeasure++;
-                beatsPerMeasureElement.textContent = beatsPerMeasure;
-            }
-        });
-        
-        // Start/stop button
-        startStopButton.addEventListener('click', function() {
-            if (isRunning) {
-                stopMetronome();
-            } else {
-                startMetronome();
-            }
-        });
-        
-        // Dark mode toggle
-        modeToggle.addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
-            if (document.body.classList.contains('dark-mode')) {
-                modeToggle.textContent = 'Light Mode';
-            } else {
-                modeToggle.textContent = 'Dark Mode';
-            }
-        });
-        
-        // Play violin string sounds
-        playButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const string = this.dataset.string;
-                playViolinString(string);
-                
-                // Highlight the string being played
-                strings.forEach(s => s.classList.remove('active'));
-                this.parentElement.classList.add('active');
-                setTimeout(() => {
-                    this.parentElement.classList.remove('active');
-                }, 1000);
-            });
-        });
-        
-        // Play all strings in sequence
-        playAllButton.addEventListener('click', function() {
+        // Initialize audio context on user interaction
+        function initAudioContext() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
-            
-            // Play strings from highest to lowest (E, A, D, G)
-            playViolinString('e');
-            setTimeout(() => {
-                playViolinString('a');
-                setTimeout(() => {
-                    playViolinString('d');
-                    setTimeout(() => {
-                        playViolinString('g');
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-            
-            // Highlight strings in sequence
-            strings.forEach((s, i) => {
-                setTimeout(() => {
-                    s.classList.add('active');
-                    setTimeout(() => {
-                        s.classList.remove('active');
-                    }, 900);
-                }, i * 1000);
-            });
-        });
-        
-        function startMetronome() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
-            isRunning = true;
-            startStopButton.textContent = 'Stop';
-            currentBeat = 0;
-            
-            const bpm = parseInt(bpmSlider.value);
-            const interval = 60000 / bpm; // Convert BPM to milliseconds
-            
-            metronomeInterval = setInterval(function() {
-                playClick();
-                currentBeat = (currentBeat % beatsPerMeasure) + 1;
-                beatCountElement.textContent = currentBeat;
-                
-                // Visual feedback
-                visualizer.classList.add('active');
-                setTimeout(function() {
-                    visualizer.classList.remove('active');
-                }, 100);
-                
-            }, interval);
         }
         
-        function stopMetronome() {
-            isRunning = false;
-            startStopButton.textContent = 'Start';
-            clearInterval(metronomeInterval);
-            beatCountElement.textContent = '0';
-            visualizer.classList.remove('active');
-        }
-        
+        // Play click sound
         function playClick() {
-            if (currentBeat === 1) {
-                // Downbeat (first beat of measure) - higher pitch
-                playMetronomeSound(800, 0.1);
-            } else {
-                // Regular beat - lower pitch
-                playMetronomeSound(500, 0.08);
-            }
-        }
-        
-        function playMetronomeSound(frequency, duration) {
+            initAudioContext();
+            
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
             
             oscillator.type = 'sine';
-            oscillator.frequency.value = frequency;
+            oscillator.frequency.value = 1000;
+            gainNode.gain.value = 0.5;
+            
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            gainNode.gain.setValueAtTime(0.7, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(
-                0.01, 
-                audioContext.currentTime + duration
-            );
-            
             oscillator.start();
-            oscillator.stop(audioContext.currentTime + duration);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+            oscillator.stop(audioContext.currentTime + 0.1);
+            
+            // Visual feedback
+            visualizerPulse.classList.remove('pulse-active');
+            void visualizerPulse.offsetWidth; // Trigger reflow
+            visualizerPulse.classList.add('pulse-active');
         }
         
-        function playViolinString(string) {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Start/stop metronome
+        function toggleMetronome() {
+            if (isPlaying) {
+                clearInterval(metronomeInterval);
+                startStopBtn.textContent = 'Start';
+                isPlaying = false;
+                startStopBtn.classList.remove('btn-danger');
+                startStopBtn.classList.add('btn-primary');
+            } else {
+                initAudioContext();
+                const bpm = parseInt(bpmSlider.value);
+                const interval = 60000 / bpm; // Convert BPM to milliseconds
+                
+                // Play first click immediately
+                playClick();
+                
+                // Set up interval for subsequent clicks
+                metronomeInterval = setInterval(playClick, interval);
+                startStopBtn.textContent = 'Stop';
+                isPlaying = true;
+                startStopBtn.classList.remove('btn-primary');
+                startStopBtn.classList.add('btn-danger');
             }
-            
-            let frequency;
-            switch(string) {
-                case 'e': frequency = 659.25; break; // E5
-                case 'a': frequency = 440.00; break; // A4
-                case 'd': frequency = 293.66; break; // D4
-                case 'g': frequency = 196.00; break; // G3
-                default: frequency = 440.00;
-            }
-            
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            // Use a more complex oscillator for violin-like sound
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.value = frequency;
-            
-            // Add a filter to make it more violin-like
-            const filter = audioContext.createBiquadFilter();
-            filter.type = "lowpass";
-            filter.frequency.value = 2000;
-            
-            oscillator.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            // Violin-like envelope with attack and decay
-            const now = audioContext.currentTime;
-            gainNode.gain.setValueAtTime(0, now);
-            gainNode.gain.linearRampToValueAtTime(0.7, now + 0.1); // Attack
-            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 2); // Decay
-            
-            oscillator.start();
-            oscillator.stop(now + 2);
         }
+        
+        // Update BPM display when slider changes
+        function updateBpmDisplay() {
+            const bpm = bpmSlider.value;
+            bpmValue.textContent = bpm;
+            tempoIndicator.textContent = bpm;
+            
+            // If metronome is playing, restart it with new BPM
+            if (isPlaying) {
+                toggleMetronome();
+                toggleMetronome();
+            }
+        }
+        
+        // Calculate tempo from taps
+        function calculateTempo() {
+            const now = Date.now();
+            
+            // Visual feedback for tap
+            tapTempoBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                tapTempoBtn.style.transform = 'scale(1)';
+            }, 100);
+            
+            if (lastTapTime) {
+                const timeDiff = now - lastTapTime;
+                
+                // Only consider reasonable time differences (40-208 BPM range)
+                if (timeDiff > 288 && timeDiff < 1500) {
+                    tapTimes.push(timeDiff);
+                    
+                    // Keep only the last 4 taps
+                    if (tapTimes.length > 4) {
+                        tapTimes.shift();
+                    }
+                    
+                    // Calculate average
+                    const sum = tapTimes.reduce((a, b) => a + b, 0);
+                    const avg = sum / tapTimes.length;
+                    const calculatedBpm = Math.round(60000 / avg);
+                    
+                    // Ensure BPM is within our slider range
+                    const clampedBpm = Math.max(40, Math.min(208, calculatedBpm));
+                    bpmSlider.value = clampedBpm;
+                    updateBpmDisplay();
+                }
+            }
+            
+            lastTapTime = now;
+        }
+        
+        // Event listeners
+        startStopBtn.addEventListener('click', toggleMetronome);
+        bpmSlider.addEventListener('input', updateBpmDisplay);
+        tapTempoBtn.addEventListener('click', calculateTempo);
+        
+        // Add btn-danger class to CSS dynamically
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-danger {
+                background: var(--danger) !important;
+            }
+            .btn-danger:hover {
+                background: #c0392b !important;
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
